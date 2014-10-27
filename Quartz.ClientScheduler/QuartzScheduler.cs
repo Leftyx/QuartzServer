@@ -17,10 +17,8 @@ namespace Quartz.ClientScheduler
         public string JobName { get; set; }
         public string JobGroup { get; set; }
         public int Priority { get; set; }
-        public string CronExpression { get; set; }
 
-        private readonly ISchedulerFactory _schedulerFactory;
-
+        private readonly ISchedulerFactory _schedulerFactory = null;
 
         public QuartzScheduler(string server, int port, string scheduler)
         {
@@ -32,7 +30,9 @@ namespace Quartz.ClientScheduler
                 Instance = _schedulerFactory.GetScheduler();
 
                 if (!Instance.IsStarted)
+                {
                     Instance.Start();
+                }
             }
             catch (SchedulerException ex)
             {

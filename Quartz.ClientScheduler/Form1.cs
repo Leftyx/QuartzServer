@@ -13,14 +13,16 @@ namespace Quartz.ClientScheduler
 {
     public partial class Form1 : Form
     {
+        private static IScheduler Scheduler = null;
+
         public Form1()
         {
             InitializeComponent();
+            Scheduler = new QuartzScheduler("127.0.0.1", 555, "QuartzScheduler").Instance;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            IScheduler sched = new QuartzScheduler("127.0.0.1", 555, "QuartzScheduler").Instance;
             IJobDetail postbagjob = null;
             ITrigger postbagJobTrigger = null;
             try
@@ -30,16 +32,21 @@ namespace Quartz.ClientScheduler
                     .Build();
                 postbagJobTrigger = (ISimpleTrigger)TriggerBuilder.Create()
                     .WithIdentity("SampleTrigger", "QUARTZGROUP")
-                    .WithSimpleSchedule(x => x.WithIntervalInSeconds(5).RepeatForever())
+                    .WithSimpleSchedule(x => x.WithIntervalInSeconds(2).RepeatForever())
                     .StartNow()
                     .Build();
 
-                sched.ScheduleJob(postbagjob, postbagJobTrigger);
+                Scheduler.ScheduleJob(postbagjob, postbagJobTrigger);
             }
             catch (SchedulerException ex)
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Scheduler.Standby();
         }
     }
 }
